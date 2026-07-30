@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>yt2anki</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="../icons/icon-32.png" width="24" height="24" alt="">
+        <h1>yt2anki</h1>
+      </header>
+
+      <p id="video-title" class="video-title" hidden></p>
+
+      <div id="language-fields" class="language-fields" hidden>
+        <label>
+          <span>Target Language</span>
+          <select id="target-locale"></select>
+        </label>
+        <label id="target-track-field" hidden>
+          <span>Target caption track</span>
+          <select id="target-track"></select>
+        </label>
+        <label>
+          <span>Native Language</span>
+          <select id="native-locale"></select>
+        </label>
+        <label id="native-track-field" hidden>
+          <span>Native caption track</span>
+          <select id="native-track"></select>
+        </label>
+      </div>
+
+      <p id="status" class="status" role="status" aria-live="polite">
+        Checking this video…
+      </p>
+      <button id="primary-action" type="button" disabled>
+        Generate cards
+      </button>
+    </main>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

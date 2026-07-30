@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>yt2anki editor</title>
+    <link rel="stylesheet" href="editor.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <img src="../icons/icon-32.png" width="28" height="28" alt="">
+        <span>yt2anki</span>
+      </div>
+      <h1 id="video-title">Loading Draft…</h1>
+      <span id="language-pair" class="language-pair" aria-label="Language Pair"></span>
+      <span id="save-state" class="save-state" role="status" aria-live="polite"></span>
+      <button id="discard" class="text-button danger" type="button">
+        Discard draft
+      </button>
+    </header>
+
+    <main id="editor" class="editor" hidden>
+      <section class="segments-panel" aria-label="Segments">
+        <div class="segments-toolbar">
+          <strong id="selection-summary"></strong>
+          <div class="toolbar-actions">
+            <button id="select-all" class="text-button" type="button">Select all</button>
+            <button id="clear-selection" class="text-button" type="button">Clear selection</button>
+          </div>
+        </div>
+        <div id="segment-list" class="segment-list"></div>
+      </section>
+
+      <aside class="preview-panel">
+        <section class="surface preview-surface" aria-label="Video preview">
+          <div class="preview-frame">
+            <iframe
+              id="preview"
+              title="Current YouTube Segment"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <div class="preview-controls">
+            <span id="preview-time"></span>
+            <button id="replay" class="secondary-button" type="button">Replay</button>
+          </div>
+        </section>
+
+        <section id="gemini-panel" class="surface key-panel" hidden>
+          <h2>Translate with Gemini</h2>
+          <p>Stored only in this browser and sent only to Google Gemini.</p>
+          <label>
+            <span>Gemini API key</span>
+            <input id="gemini-key" type="password" autocomplete="off">
+          </label>
+          <div class="button-row">
+            <button id="translate" class="primary-button" type="button">
+              Save and translate
+            </button>
+            <button id="forget-gemini" class="text-button" type="button" hidden>
+              Forget key
+            </button>
+          </div>
+          <p id="translation-status" class="inline-status" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="surface export-panel">
+          <h2>Export checks</h2>
+          <ul class="checks">
+            <li id="check-captions">Manual Target captions</li>
+            <li id="check-embeddable">Embeddable</li>
+            <li id="check-vp9">VP9 WebM</li>
+            <li id="check-opus">Opus WebM</li>
+          </ul>
+
+          <div id="anki-key-panel" class="anki-key-panel" hidden>
+            <label>
+              <span>AnkiConnect API key</span>
+              <input id="anki-key" type="password" autocomplete="off">
+            </label>
+            <p>
+              Find this separate local key in Anki under
+              Tools → Add-ons → AnkiConnect → Config. It is not your Gemini key.
+            </p>
+            <button id="save-anki-key" class="primary-button" type="button" hidden>
+              Save key and send
+            </button>
+          </div>
+          <button id="forget-anki" class="text-button" type="button" hidden>
+            Forget stored AnkiConnect key
+          </button>
+
+          <p id="export-status" class="inline-status" role="status" aria-live="polite"></p>
+          <div class="export-actions">
+            <button id="send-anki" class="primary-button" type="button">
+              Send to Anki
+            </button>
+            <button id="download-apkg" class="secondary-button" type="button">
+              Download .apkg
+            </button>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <p id="fatal-error" class="fatal-error" role="alert" hidden></p>
+
+    <dialog id="discard-dialog">
+      <form method="dialog">
+        <h2>Discard this Draft?</h2>
+        <p>All Segment edits and selections for this video will be removed.</p>
+        <div class="dialog-actions">
+          <button value="cancel" class="secondary-button">Keep draft</button>
+          <button id="confirm-discard" value="confirm" class="danger-button">
+            Discard draft
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="editor.js"></script>
+  </body>
+</html>

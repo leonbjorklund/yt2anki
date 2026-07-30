@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "yt2anki",
+  "description": "Turn manually captioned YouTube videos into listening-recognition material for Anki Desktop.",
+  "version": "0.1.0",
+  "minimum_chrome_version": "138",
+  "permissions": [
+    "activeTab",
+    "declarativeNetRequestWithHostAccess",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1/*",
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  "optional_host_permissions": [
+    "https://www.youtube.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "yt2anki",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src http://127.0.0.1:8765 https://generativelanguage.googleapis.com; frame-src https://www.youtube.com; base-uri 'none'; form-action 'none'"
+  }
+}

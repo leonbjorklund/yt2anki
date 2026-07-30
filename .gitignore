@@ -1,0 +1,13 @@
+.tmp/
+.env
+dist/
+node_modules/
+playwright-report/
+test-results/
+*.anki2
+*.apkg
+__pycache__/
+*.py[cod]
+/AGENTS.md
+/CONTEXT.md
+/docs/
