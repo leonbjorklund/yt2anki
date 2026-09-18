@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>yt2anki editor</title>
+    <link rel="stylesheet" href="editor.css">
+  </head>
+  <body>
+    <span id="save-state" class="visually-hidden" role="status"></span>
+
+    <main id="editor" class="editor" hidden>
+      <section class="segments-panel" aria-label="Segments">
+        <div class="segments-actions">
+          <div class="segments-toolbar">
+            <h1 id="video-title">Loading Draft…</h1>
+            <div class="toolbar-actions">
+              <button id="download-apkg" class="primary-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/>
+                </svg>
+                <span id="package-action-label">Download .apkg</span>
+              </button>
+            </div>
+          </div>
+          <span id="export-progress" class="visually-hidden" role="status"></span>
+        </div>
+        <p id="pinyin-status" class="pinyin-status visually-hidden" role="status"></p>
+        <div class="table-shell">
+          <table id="segment-table" class="segment-table">
+            <thead>
+              <tr>
+                <th class="selection-column" scope="col">
+                  <input id="select-all" type="checkbox" aria-label="Select all Segments">
+                </th>
+                <th class="number-column" scope="col"><span id="selection-summary"></span><span class="visually-hidden"> Segments</span></th>
+                <th class="time-column" scope="col">Time</th>
+                <th id="target-heading" scope="col">
+                  <div class="column-heading">
+                    <span id="target-heading-label">Track one</span>
+                    <button id="generate-pinyin" class="ghost-button" type="button" hidden aria-label="Add Pinyin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Pinyin</span></button>
+                  </div>
+                </th>
+                <th id="pinyin-heading" scope="col" hidden>Pinyin</th>
+                <th id="translation-heading" scope="col"><div class="column-heading"><span id="translation-heading-label">Track two</span></div></th>
+              </tr>
+            </thead>
+            <tbody id="segment-list"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside class="preview-panel">
+        <p id="draft-status" class="draft-status" role="alert" hidden></p>
+        <section class="preview-video" aria-label="Video preview">
+          <h2 class="preview-heading">Card preview</h2>
+          <div class="preview-frame">
+            <iframe
+              id="preview"
+              title="YouTube video preview"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <div id="preview-controls" class="preview-controls" hidden>
+            <span id="preview-time"></span>
+            <button id="replay" class="secondary-button" type="button" aria-label="Replay" title="Replay"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.6 7.4M3 4v7h7"/></svg></button>
+          </div>
+        </section>
+
+        <section class="preview-editor" aria-label="Selected Segment">
+          <label class="preview-field">
+            <span id="preview-target-label">Track one</span>
+            <textarea spellcheck="false" id="preview-target" rows="1" required></textarea>
+          </label>
+          <label id="preview-pinyin-field" class="preview-field" hidden>
+            <span>Pinyin</span>
+            <textarea spellcheck="false" id="preview-pinyin" rows="1"></textarea>
+          </label>
+          <label class="preview-field">
+            <span id="preview-translation-label">Track two</span>
+            <textarea spellcheck="false" id="preview-translation" rows="1"></textarea>
+          </label>
+        </section>
+        <p id="export-status" class="inline-status"></p>
+      </aside>
+    </main>
+
+    <p id="fatal-error" class="fatal-error" role="alert" hidden></p>
+
+    <script type="module" src="editor.js"></script>
+  </body>
+</html>

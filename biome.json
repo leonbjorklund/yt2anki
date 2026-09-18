@@ -1,0 +1,37 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.9/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "src/**/*.ts",
+      "src/**/*.json",
+      "src/**/*.css",
+      "tests/**/*.js",
+      "tests/**/*.mjs",
+      "e2e/**/*.js",
+      "scripts/**/*.mjs",
+      "biome.json",
+      "package.json",
+      "tsconfig.json",
+      "playwright.config.mjs",
+      "playwright.caption-gate.config.mjs"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "lineEnding": "auto",
+    "lineWidth": 80
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended"
+    }
+  }
+}

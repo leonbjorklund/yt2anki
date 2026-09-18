@@ -1,0 +1,42 @@
+{
+  "name": "yt2anki",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@11.6.0",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "package": "node scripts/package.mjs",
+    "format:check": "biome format .",
+    "lint": "biome lint --error-on-warnings .",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test \"tests/*.test.js\"",
+    "test:anki:apkg": "node tests/integration/apkg-import.mjs",
+    "test:anki:playback": "node tests/integration/anki-playback.mjs",
+    "test:manual": "node scripts/start-manual-test.mjs",
+    "test:manual:setup": "node scripts/start-manual-test.mjs --setup --label \"Dedicated setup\"",
+    "test:e2e": "playwright test",
+    "test:e2e:caption-gate": "playwright test --config=playwright.caption-gate.config.mjs",
+    "test:tooling": "node --test \"tests/tooling/*.test.js\"",
+    "verify:build": "node scripts/verify-build.mjs",
+    "verify": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test",
+    "verify:handoff": "pnpm verify && pnpm test:tooling && pnpm test:e2e && pnpm build && pnpm verify:build"
+  },
+  "dependencies": {
+    "ankipack": "^0.3.0",
+    "pinyin-pro": "^3.29.3",
+    "sql.js": "^1.14.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.9",
+    "@playwright/test": "^1.62.0",
+    "@types/chrome": "^0.2.2",
+    "esbuild": "^0.28.1",
+    "fflate": "^0.8.3",
+    "typescript": "^7.0.2"
+  }
+}

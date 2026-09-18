@@ -1,0 +1,30 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="8 7 43 48"
+  width="22"
+  height="22"
+  aria-hidden="true"
+>
+  <mask id="yt2anki-a" fill="#fff">
+    <rect
+      x="13"
+      y="8"
+      width="30"
+      height="42"
+      rx="6"
+      transform="rotate(-15 32 32)"
+    />
+    <rect
+      x="20"
+      y="13"
+      width="31"
+      height="42"
+      rx="6"
+      stroke="#000"
+      stroke-width="4"
+      transform="rotate(8 32 32)"
+    />
+    <path d="m29 26v16l14-8z" fill="#000" />
+  </mask>
+  <rect width="64" height="64" fill="#fa5c73" mask="url(#yt2anki-a)" />
+</svg>

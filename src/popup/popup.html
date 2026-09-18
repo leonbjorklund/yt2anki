@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>yt2anki</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="../icons/yt2anki-logo.svg" width="24" height="24" alt="">
+        <h1 id="heading">Checking caption tracks…</h1>
+      </header>
+
+      <div id="caption-fields" class="caption-fields" hidden>
+        <label>
+          <span id="target-track-label">Track one</span>
+          <select id="target-track" required></select>
+        </label>
+        <label id="translation-field">
+          <span id="translation-track-label">Track two</span>
+          <select id="translation-track"></select>
+        </label>
+      </div>
+
+      <div class="popup-actions">
+        <button id="primary-action" class="secondary-action" type="button" disabled hidden>
+          <span id="primary-action-label">Checking video…</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M21 3l-9 9"/><path d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/></svg>
+        </button>
+        <button
+          id="download-apkg"
+          type="button"
+          disabled
+          hidden
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>
+          <span id="package-action-label">Download .apkg</span>
+        </button>
+      </div>
+      <p id="status" class="status" hidden></p>
+      <span id="progress" class="visually-hidden" role="status"></span>
+    </main>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
