@@ -10,7 +10,7 @@ import {
 } from "./manual-chrome-profile.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const profileDir = join(root, ".tmp", "manual-chrome-profile");
+const profileDir = join(root, ".local", "manual-chrome-profile");
 const chrome = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const { values } = parseArgs({
   options: {

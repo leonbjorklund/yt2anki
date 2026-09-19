@@ -19,12 +19,12 @@ test("manual Chrome accepts a video ID or watch URL", () => {
 test("manual Chrome opens setup and video in its dedicated profile", () => {
   assert.deepEqual(
     manualChromeArguments({
-      profileDir: "C:\\repo\\.tmp\\manual-chrome-profile",
+      profileDir: "C:\\repo\\.local\\manual-chrome-profile",
       setup: true,
       videoId: "APv9hfjYRY0",
     }),
     [
-      "--user-data-dir=C:\\repo\\.tmp\\manual-chrome-profile",
+      "--user-data-dir=C:\\repo\\.local\\manual-chrome-profile",
       "--no-default-browser-check",
       "--no-first-run",
       "--new-window",
@@ -35,7 +35,7 @@ test("manual Chrome opens setup and video in its dedicated profile", () => {
 });
 
 test("the runtime Chrome shutdown guard matches only its exact profile", () => {
-  const profile = "C:\\repo\\.tmp\\manual-chrome-profile";
+  const profile = "C:\\repo\\.local\\manual-chrome-profile";
   const result = spawnSync(
     "powershell.exe",
     [

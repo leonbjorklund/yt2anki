@@ -24,7 +24,7 @@ function Get-CimInstance {
     }
     [pscustomobject]@{
         Name = 'chrome.exe'
-        CommandLine = 'chrome.exe --user-data-dir=C:\repo\.tmp\manual-chrome-profile'
+        CommandLine = 'chrome.exe --user-data-dir=C:\repo\.local\manual-chrome-profile'
         ProcessId = 101
     }
 }
@@ -50,4 +50,4 @@ function Start-Sleep {
     param($Milliseconds)
 }
 
-& $ScriptPath -ProfilePath 'C:\repo\.tmp\manual-chrome-profile'
+& $ScriptPath -ProfilePath 'C:\repo\.local\manual-chrome-profile'

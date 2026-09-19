@@ -1,6 +1,6 @@
 [
   {
-    "CommandLine": "chrome.exe \"--user-data-dir=C:\\repo\\.tmp\\manual-chrome-profile\"",
+    "CommandLine": "chrome.exe \"--user-data-dir=C:\\repo\\.local\\manual-chrome-profile\"",
     "Name": "chrome.exe",
     "ProcessId": 101
   },
@@ -10,17 +10,17 @@
     "ProcessId": 102
   },
   {
-    "CommandLine": "chrome.exe \"--user-data-dir=C:\\repo\\.tmp\\manual-chrome-profile-old\"",
+    "CommandLine": "chrome.exe \"--user-data-dir=C:\\repo\\.local\\manual-chrome-profile-old\"",
     "Name": "chrome.exe",
     "ProcessId": 103
   },
   {
-    "CommandLine": "not-chrome.exe \"--user-data-dir=C:\\repo\\.tmp\\manual-chrome-profile\"",
+    "CommandLine": "not-chrome.exe \"--user-data-dir=C:\\repo\\.local\\manual-chrome-profile\"",
     "Name": "not-chrome.exe",
     "ProcessId": 104
   },
   {
-    "CommandLine": "chrome.exe \"--other=x--user-data-dir=C:\\repo\\.tmp\\manual-chrome-profile\"",
+    "CommandLine": "chrome.exe \"--other=x--user-data-dir=C:\\repo\\.local\\manual-chrome-profile\"",
     "Name": "chrome.exe",
     "ProcessId": 105
   }

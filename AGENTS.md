@@ -26,7 +26,7 @@ Read README.md and CONTEXT.md. Product changes require an approved design and im
 
 Only the exact message `run` triggers `pnpm test:manual -- --label "<current check>"`. Reuse its dedicated profile and Chrome's last-used selection; never force Default. If new or missing, run `pnpm test:manual:setup` once for the owner's permission step. No substitute launches or reloads.
 
-Preserve `.tmp/manual-chrome-profile`; never inspect, clean, copy, commit, or automate its stored data. Never test against the owner's normal Chrome profile or installed Anki collection. The command does not contact Anki; the owner removes leftover Video Decks. After launch, report only the popup heading and behavior to check.
+Preserve `.local/manual-chrome-profile`; never inspect, clean, copy, commit, or automate its stored data. Never test against the owner's normal Chrome profile or installed Anki collection. The command does not contact Anki; the owner removes leftover Video Decks. After launch, report only the popup heading and behavior to check.
 
 ## Approvals
 

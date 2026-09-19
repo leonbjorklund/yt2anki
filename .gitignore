@@ -1,4 +1,6 @@
 .tmp/
+.local/
+releases/
 .env
 .env.*
 !.env.example
