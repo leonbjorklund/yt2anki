@@ -175,7 +175,8 @@ async function initialize(): Promise<void> {
   translationField.hidden = tracks.length < 2;
   if (tracks.length === 0) {
     action.hidden = true;
-    showStatus("No supported captions");
+    heading.textContent = "No supported captions";
+    progress.textContent = "No supported captions";
     return;
   }
   populateTargetTracks(tracks);

@@ -895,8 +895,9 @@ test("disables generation when only auto-generated captions exist", async ({
   );
   const popup = await popupPromise;
 
-  await expect(popup.locator("#heading")).toHaveText("0 caption tracks");
-  await expect(popup.locator("#status")).toHaveText("No supported captions");
+  await expect(popup.locator("#heading")).toHaveText("No supported captions");
+  await expect(popup.locator("#status")).toBeHidden();
+  await expect(popup.getByRole("status")).toHaveText("No supported captions");
   await expect(popup.locator("#caption-fields")).toBeHidden();
   await expect(popup.locator("#primary-action")).toBeHidden();
   await source.close();
