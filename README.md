@@ -8,7 +8,7 @@ Turn YouTube videos into Anki cards. Currently only supports videos with manuall
 
 <img src="https://github.com/leonbjorklund/yt2anki/raw/main/docs/popup.png" width="400" alt="Choose Chinese and English caption tracks on a YouTube video" />
 
-#### Edit and preview
+#### Edit, merge, and preview
 
 <img src="https://github.com/leonbjorklund/yt2anki/raw/main/docs/editor-preview.png" width="400" alt="Edit captions, Pinyin, and translations alongside a video preview" />
 
