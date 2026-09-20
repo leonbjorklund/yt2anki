@@ -86,11 +86,19 @@ async function initialize(): Promise<void> {
 
   let autosave: DraftAutosave;
   let exporter: ExportController;
+  let downloadDisabledBeforeMerge = false;
   const segments = createSegmentEditor({
     bulkSelection,
     draft,
     generatePinyin,
     list: segmentList,
+    mergeStatus: element<HTMLElement>("merge-status"),
+    onMergeBusy: (busy) => {
+      if (busy) downloadDisabledBeforeMerge = downloadButton.disabled;
+      downloadButton.disabled =
+        busy || downloadDisabledBeforeMerge || lifecycle.mode === "stale";
+    },
+    onMergeError: showDraftProblem,
     onChange: () => {
       exporter.onDraftChanged();
       autosave.queue();
@@ -112,6 +120,7 @@ async function initialize(): Promise<void> {
       return;
     }
     lifecycle.mode = "stale";
+    segments.setDisabled(true);
     saveState.textContent = "";
     showDraftProblem(error.message);
     disableAllEditorControls();

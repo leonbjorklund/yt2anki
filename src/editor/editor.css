@@ -11,10 +11,13 @@
   --danger: #b42318;
   --danger-surface: #fff1f0;
   --field: #fbfcfd;
-  --field-border: #8e939b;
   --focus: #626871;
   --muted: #626871;
+  --merge-hover: #eef1f5;
+  --merge-outline: #8e939b;
   --on-action: #ffffff;
+  --row-hover: color-mix(in srgb, var(--surface-hover) 40%, var(--surface));
+  --row-active: color-mix(in srgb, var(--surface-hover) 60%, var(--surface));
   --surface: #ffffff;
   --surface-hover: #f8fafc;
   --text: #17191c;
@@ -29,10 +32,12 @@
     --danger: #ff9592;
     --danger-surface: #3b1219;
     --field: #1f252c;
-    --field-border: #676f78;
     --focus: #a7afb8;
     --muted: #a7afb8;
+    --merge-hover: #252a32;
+    --merge-outline: #454e59;
     --on-action: #ffffff;
+    --row-hover: #1e2229;
     --surface: #161a20;
     --surface-hover: #292f37;
     --text: #dfe3e8;
@@ -237,13 +242,99 @@ h1,
   width: clamp(80px, 11cqw, 112px);
 }
 
+.segment-row {
+  --row-bg: var(--surface);
+  --next-row-bg: var(--surface);
+  position: relative;
+  background: var(--row-bg);
+}
+
 .segment-row:hover {
-  background: color-mix(in srgb, var(--surface-hover) 40%, var(--surface));
+  --row-bg: var(--row-hover);
 }
 
 .segment-row.active,
 .segment-row.active:hover {
-  background: color-mix(in srgb, var(--surface-hover) 60%, var(--surface));
+  --row-bg: var(--row-active);
+}
+
+.segment-row:has(+ .segment-row:hover) {
+  --next-row-bg: var(--row-hover);
+}
+
+.segment-row:has(+ .segment-row.active) {
+  --next-row-bg: var(--row-active);
+}
+
+.segment-row:has(.merge-boundary:enabled:hover),
+.segment-row:has(.merge-boundary:enabled:hover) + .segment-row {
+  --row-bg: var(--row-hover);
+}
+
+.segment-row:has(.merge-boundary:enabled:hover),
+.segment-row:has(+ .segment-row .merge-boundary:enabled:hover) {
+  --next-row-bg: var(--row-hover);
+}
+
+.segment-row > td:last-child {
+  padding-right: 30px;
+}
+
+.merge-boundary,
+.revert-merge {
+  position: absolute;
+  z-index: 1;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  outline: none;
+  color: var(--muted);
+  background: transparent;
+}
+
+.merge-boundary {
+  bottom: -10px;
+  background: linear-gradient(
+    to bottom,
+    var(--row-bg) 50%,
+    var(--next-row-bg) 50%
+  );
+}
+
+.revert-merge {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.merge-boundary svg,
+.revert-merge svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.merge-boundary:hover:where(:enabled),
+.revert-merge:hover:where(:enabled) {
+  background: var(--merge-hover);
+  outline: 1px solid var(--merge-outline);
+  outline-offset: 0;
+  color: var(--text);
+}
+
+.merge-boundary:focus-visible,
+.revert-merge:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  color: var(--text);
 }
 
 .segment-row.invalid .segment-textarea[data-field="target"] {
@@ -288,10 +379,6 @@ h1,
   background: transparent;
   font-size: 13px;
   line-height: 17px;
-}
-
-.segment-textarea:hover {
-  background: color-mix(in srgb, var(--field) 72%, transparent);
 }
 
 .segment-textarea:focus {
@@ -363,13 +450,14 @@ h1,
   width: 100%;
   height: auto;
   min-height: 42px;
-  max-height: 60px;
+  max-height: 122px;
   padding: 8px;
   field-sizing: content;
   resize: none;
   overflow: auto;
-  border: 1px solid var(--field-border);
+  border: 0;
   border-radius: 7px;
+  outline: none;
   color: var(--text);
   background: var(--field);
   font-size: 15px;
@@ -490,12 +578,6 @@ h1,
   padding: 0;
   border: 0;
   background: transparent;
-}
-
-.preview-field textarea:focus-visible {
-  outline: 1px solid var(--focus);
-  outline-offset: -1px;
-  border-color: var(--focus);
 }
 
 #replay:hover:not(:disabled) {

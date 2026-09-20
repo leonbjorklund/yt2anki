@@ -1,10 +1,10 @@
 # Privacy
 
-Updated September 18, 2026. Support/privacy contact: [leon.bjorklund@gmail.com](mailto:leon.bjorklund@gmail.com).
+Updated September 19, 2026. Support/privacy contact: [leon.bjorklund@gmail.com](mailto:leon.bjorklund@gmail.com).
 
 ## On your device
 
-After your toolbar action, yt2anki reads video/track details and retrieves selected captions. Drafts, edits, Pinyin, timing, video/tab references, selections, preferences, deck reservations, and recovery records stay in Chrome's local storage without sync. Pinyin and exports are generated locally. Drafts and exports are unencrypted.
+After your toolbar action, yt2anki reads video/track details and retrieves selected captions. Drafts, edits, merge history, Pinyin, timing, video/tab references, selections, preferences, deck reservations, and recovery records stay in Chrome's local storage without sync. Pinyin and exports are generated locally. Drafts and exports are unencrypted.
 
 Regeneration replaces that video's Draft; export keeps it. Caption caches end on navigation/close. Recovery records expire after 60 seconds but may remain stored. Uninstalling clears extension storage; delete downloads and Anki data separately.
 

@@ -1,4 +1,5 @@
 import { chineseSegmentField } from "../domain/language.ts";
+import { mergeSegments, revertSegment } from "../domain/merge.ts";
 import { fillBlankPinyin } from "../domain/pinyin.ts";
 import type { Draft, Segment } from "../domain/types.ts";
 import { createCardOrderControls } from "./card-order.ts";
@@ -8,6 +9,9 @@ interface SegmentEditorOptions {
   draft: Draft;
   generatePinyin: HTMLButtonElement;
   list: HTMLTableSectionElement;
+  mergeStatus: HTMLElement;
+  onMergeBusy: (busy: boolean) => void;
+  onMergeError: (message: string) => void;
   onChange: () => void;
   onPreview: (segment: Segment, index: number) => void;
   onSelect: (segment: Segment, index: number) => void;
@@ -32,6 +36,9 @@ export function createSegmentEditor({
   draft,
   generatePinyin,
   list,
+  mergeStatus,
+  onMergeBusy,
+  onMergeError,
   onChange,
   onPreview,
   onSelect,
@@ -53,6 +60,7 @@ export function createSegmentEditor({
   });
   let activeIndex = 0;
   let disabled = false;
+  let merging = false;
   const pinyinSource = chineseSegmentField(
     draft.targetTrack,
     draft.translationTrack,
@@ -65,6 +73,7 @@ export function createSegmentEditor({
     draft.segments.some((segment) => Boolean(segment.pinyin.trim()));
 
   list.addEventListener("click", (event) => {
+    if (disabled || merging) return;
     const target = event.target as Element;
     const row = target.closest<HTMLTableRowElement>(".segment-row");
     if (!row) {
@@ -74,11 +83,62 @@ export function createSegmentEditor({
     if (!draft.segments[index]) {
       return;
     }
+    if (target.closest(".merge-boundary")) {
+      void mergeAt(index);
+      return;
+    }
+    if (target.closest(".revert-merge")) {
+      const sources = revertSegment(draft.segments[index]);
+      if (sources) {
+        replaceSegments(index, 1, sources);
+        mergeStatus.textContent = "Last merge reverted.";
+      }
+      return;
+    }
     setActive(index);
     if (!target.closest('input[type="checkbox"]')) {
       onPreview(draft.segments[index], index);
     }
   });
+
+  async function mergeAt(index: number): Promise<void> {
+    const first = draft.segments[index];
+    const second = draft.segments[index + 1];
+    if (!first || !second) return;
+    merging = true;
+    onMergeBusy(true);
+    applyInteractionState();
+    let merged: Segment | undefined;
+    try {
+      merged = await mergeSegments(first, second);
+    } catch {
+      onMergeError("Cards could not be merged. Your rows have not changed.");
+    } finally {
+      merging = false;
+      onMergeBusy(false);
+      applyInteractionState();
+    }
+    // Regeneration can make this editor stale while the identity is computed.
+    if (!merged || disabled) return;
+    replaceSegments(index, 2, [merged]);
+    mergeStatus.textContent = "Cards merged. Use Revert last merge to undo.";
+  }
+
+  function replaceSegments(
+    index: number,
+    count: number,
+    segments: Segment[],
+  ): void {
+    draft.segments.splice(index, count, ...segments);
+    activeIndex = index;
+    render();
+    const row = rowAt(index);
+    (
+      row?.querySelector<HTMLButtonElement>(".revert-merge") ??
+      row?.querySelector<HTMLButtonElement>(".row-preview-button")
+    )?.focus({ preventScroll: true });
+    onChange();
+  }
 
   list.addEventListener("focusin", (event) => {
     const target = event.target as Element;
@@ -278,16 +338,20 @@ export function createSegmentEditor({
   }
 
   function applyInteractionState(): void {
-    cardOrder.setDisabled(disabled);
-    list.inert = disabled;
+    const editingDisabled = disabled || merging;
+    cardOrder.setDisabled(editingDisabled);
+    list.inert = editingDisabled;
     generatePinyin.hidden = pinyinSource === null || pinyinVisible;
-    generatePinyin.disabled = disabled;
+    generatePinyin.disabled = editingDisabled;
     pinyinStatus.hidden = pinyinSource === null;
-    bulkSelection.disabled = disabled;
+    bulkSelection.disabled = editingDisabled;
+    for (const button of list.querySelectorAll<HTMLButtonElement>("button")) {
+      button.disabled = editingDisabled;
+    }
     for (const checkbox of list.querySelectorAll<HTMLInputElement>(
       'input[type="checkbox"]',
     )) {
-      checkbox.disabled = disabled;
+      checkbox.disabled = editingDisabled;
     }
     for (const textarea of [
       ...list.querySelectorAll<HTMLTextAreaElement>("textarea"),
@@ -295,7 +359,7 @@ export function createSegmentEditor({
       previewPinyin,
       previewTranslation,
     ]) {
-      textarea.disabled = disabled;
+      textarea.disabled = editingDisabled;
     }
   }
 
@@ -377,7 +441,46 @@ function createRow(
   if (draft.translationTrack) {
     row.append(fieldCell("translation", segment.translation, index, draft));
   }
+  const lastCell = row.lastElementChild;
+  if (segment.mergeSources) {
+    lastCell?.append(
+      mergeControl(
+        "revert-merge",
+        `Revert last merge for Segment ${index + 1}`,
+        "M9 10H4V5m0 5 4-4a7 7 0 1 1 0 12",
+      ),
+    );
+  }
+  if (index < draft.segments.length - 1) {
+    lastCell?.append(
+      mergeControl(
+        "merge-boundary",
+        `Merge Segments ${index + 1} and ${index + 2}`,
+        "M7 5l5 4 5-4M7 19l5-4 5 4",
+      ),
+    );
+  }
   return row;
+}
+
+function mergeControl(
+  className: string,
+  label: string,
+  icon: string,
+): HTMLButtonElement {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = className;
+  button.setAttribute("aria-label", label);
+  button.title = label;
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("aria-hidden", "true");
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", icon);
+  svg.append(path);
+  button.append(svg);
+  return button;
 }
 
 function fieldCell(

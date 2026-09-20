@@ -15,6 +15,7 @@ import {
   PINYIN_NOTE_TYPE_NAME,
   pinyinNoteGuid,
 } from "../src/domain/identity.ts";
+import { mergeSegments, revertSegment } from "../src/domain/merge.ts";
 import { createDraft } from "./fixtures.js";
 
 const wasmPath = resolve("node_modules/sql.js/dist/sql-wasm.wasm");
@@ -127,6 +128,65 @@ test("builds a stable schema-v18 package without media or history", async () => 
   assert.deepEqual(first.deckConfigs, [CHRONOLOGICAL_PRESET_NAME]);
   assert.deepEqual(first.decks, ["Fixture"]);
   assert.deepEqual(first.files.sort(), ["collection.anki21b", "media", "meta"]);
+});
+
+test("merged export retains exact bounds and restores original Note identities on revert", async () => {
+  const draft = createDraft({ target: "First", translation: "One" });
+  const first = draft.segments[0];
+  first.startMs = 1234;
+  first.endMs = 6789;
+  first.pinyin = "first pronunciation";
+  const second = {
+    ...first,
+    identity: "v4_BBCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcde",
+    startMs: 3210,
+    endMs: 5678,
+    target: "Second",
+    translation: "Two",
+    pinyin: "second pronunciation",
+  };
+  const original = await inspectPackage(
+    await buildApkg({ deckName: "Merge", draft, segments: [first, second] }),
+  );
+  const merged = await mergeSegments(first, second);
+  const exported = await inspectPackage(
+    await buildApkg({ deckName: "Merge", draft, segments: [merged] }),
+  );
+  assert.deepEqual(exported.notes, [
+    {
+      fields: [
+        merged.identity,
+        draft.video.videoId,
+        "1234",
+        "6789",
+        "First Second",
+        "One Two",
+        "",
+        "first pronunciation second pronunciation",
+        "",
+      ],
+      guid: pinyinNoteGuid(merged.identity),
+    },
+  ]);
+  assert.deepEqual(exported.noteFields, original.noteFields);
+  assert.equal(exported.cardOrder.length, 1);
+  assert.ok(
+    original.notes.every(({ guid }) => guid !== exported.notes[0].guid),
+  );
+  merged.target = "Later edit";
+  const edited = await inspectPackage(
+    await buildApkg({ deckName: "Merge", draft, segments: [merged] }),
+  );
+  assert.equal(edited.notes[0].guid, exported.notes[0].guid);
+  const restored = await inspectPackage(
+    await buildApkg({
+      deckName: "Merge",
+      draft,
+      segments: revertSegment(merged),
+    }),
+  );
+  assert.deepEqual(restored.notes, original.notes);
+  assert.equal(restored.cardOrder.length, 2);
 });
 
 test("package export requires a selected Segment with Target text", async () => {

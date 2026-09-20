@@ -39,6 +39,7 @@ export interface PreciseCaptionPayload {
 export interface Segment {
   endMs: number;
   identity: string;
+  mergeSources?: [Segment, Segment];
   pinyin: string;
   selected: boolean;
   startMs: number;

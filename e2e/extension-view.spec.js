@@ -22,7 +22,6 @@ test("editor keyboard focus uses contrasting neutral outlines in both themes", a
   ]) {
     await editor.emulateMedia({ colorScheme: theme });
     for (const selector of [
-      "#preview-target",
       ".segment-textarea",
       "#select-all",
       "#replay",
@@ -35,9 +34,7 @@ test("editor keyboard focus uses contrasting neutral outlines in both themes", a
       await expect(field).toHaveCSS("outline-style", "solid");
       await expect(field).toHaveCSS(
         "outline-width",
-        selector === "#preview-target" || selector === ".segment-textarea"
-          ? "1px"
-          : "2px",
+        selector === ".segment-textarea" ? "1px" : "2px",
       );
       await expect(field).toHaveCSS("outline-color", outlineColor);
       const contrast = await field.evaluate(focusRingContrast);
@@ -317,23 +314,52 @@ test("editor dark theme separates hover, disabled, and focus states", async ({
     "aria-label",
     "Select all Segments, 2 of 3 selected",
   );
+});
 
-  await page.locator("#preview-target").focus();
-  await expect(page.locator("#preview-target")).toHaveCSS("min-height", "42px");
-  await expect(page.locator("#preview-target")).toHaveCSS(
-    "outline-offset",
-    "-1px",
-  );
-  const focus = await page.locator("#preview-target").evaluate((element) => {
-    const style = getComputedStyle(element);
-    return {
-      border: style.borderLeftColor,
-      outline: style.outlineColor,
-      width: style.outlineWidth,
-    };
-  });
-  expect(focus.border).toBe(focus.outline);
-  expect(focus.width).toBe("1px");
+test("table fields share row hover and borderless preview fields remain keyboard editable", async ({
+  extension,
+}) => {
+  const page = await openEditor(extension, createSegmentedDraft(3));
+  await page.locator("#generate-pinyin").click();
+  for (const theme of ["light", "dark"]) {
+    await page.emulateMedia({ colorScheme: theme });
+    for (const name of ["target", "translation", "pinyin"]) {
+      const field = page
+        .locator(`.segment-row textarea[data-field="${name}"]`)
+        .nth(1);
+      await page.locator("#replay").focus();
+      await field.hover();
+      await expect(field).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+      await field.focus();
+      await expect(field).toHaveCSS(
+        "background-color",
+        theme === "dark" ? "rgb(31, 37, 44)" : "rgb(251, 252, 253)",
+      );
+      await expect(field).toHaveCSS("outline-style", "solid");
+      const preview = page.locator(`#preview-${name}`);
+      await expect(preview).toHaveCSS("border-width", "0px");
+      await expect(preview).toHaveCSS("outline-style", "none");
+      const before = await preview.boundingBox();
+      // Shift+Tab returns through the real tab order to the preview field.
+      await preview.focus();
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Shift+Tab");
+      await expect(preview).toBeFocused();
+      await expect(preview).toHaveCSS("border-width", "0px");
+      await expect(preview).toHaveCSS("outline-style", "none");
+      await expect(preview).toHaveCSS(
+        "background-color",
+        theme === "dark" ? "rgb(31, 37, 44)" : "rgb(251, 252, 253)",
+      );
+      await expect(preview).toHaveCSS("min-height", "42px");
+      await expect(preview).toHaveCSS("max-height", "122px");
+      await expect(preview).toHaveCSS("padding", "8px");
+      expect(await preview.boundingBox()).toEqual(before);
+      await preview.fill(`Edited ${name} in ${theme}`);
+      await expect(field).toHaveValue(`Edited ${name} in ${theme}`);
+      await field.focus();
+    }
+  }
 });
 
 test("editor keeps its title, package button, and field limits at every width", async ({

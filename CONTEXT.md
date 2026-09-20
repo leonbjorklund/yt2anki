@@ -5,11 +5,11 @@
 - **Target Caption Track:** Required track supplying Target text.
 - **Translation Caption Track:** Optional track aligned to Target Segments.
 - **Target / Translation:** Required study text / optional supporting text.
-- **Segment:** Target event or Agreed Continuation with exact source bounds, after caption cleanup.
+- **Segment:** Target event or Agreed Continuation after caption cleanup, or manually merged neighboring Segments, retaining exact outer source bounds.
 - **Agreed Continuation:** Two adjacent events merged only when both tracks agree on the comma continuation.
-- **Segment Identity:** Identity derived from video, Target track, timing, and original text.
+- **Segment Identity:** Identity derived from video, Target track, timing, and original text; manual merges use the ordered source Segment identities.
 - **Pinyin:** Editable pronunciation for Simplified Chinese.
-- **Draft:** Autosaved editable Segments for one video.
+- **Draft:** Autosaved editable Segments and merge history for one video.
 - **Playback-Compatible Video:** Video passing current embedding and Anki playback checks.
 - **Note:** Anki content record for one Segment.
 - **Card:** Listening prompt generated from a Note.
