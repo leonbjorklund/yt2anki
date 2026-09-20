@@ -27,6 +27,9 @@ export function fillBlankPinyin(draft: Draft): {
   let kept = 0;
 
   for (const segment of draft.segments) {
+    if (segment.mergeSources) {
+      fillBlankPinyin({ ...draft, segments: segment.mergeSources });
+    }
     if (segment.pinyin.trim()) {
       kept += 1;
       continue;
