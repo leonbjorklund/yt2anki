@@ -1,6 +1,6 @@
 ## yt2anki
 
-Turn YouTube videos into Anki cards. Currently only supports videos with manually added CC.
+Turn YouTube videos into Anki cards. Currently only supports videos with manually added captions.
 
 [Chrome Web Store Link](https://chromewebstore.google.com/detail/yt2anki/gjnnnafjhfnjckdpjkfnapipfceihgcg)
 
