@@ -25,9 +25,7 @@ const { values } = parseArgs({
 });
 const outputDir = values["out-dir"] ? resolve(values["out-dir"]) : stableDist;
 await assertBuildOutput(outputDir);
-const manifest = JSON.parse(
-  await readFile(join(root, "src", "manifest.json"), "utf8"),
-);
+const manifest = JSON.parse(await readFile(join(root, "src", "manifest.json"), "utf8"));
 const browserTarget = `chrome${manifest.minimum_chrome_version}`;
 const browserNodeStub = {
   name: "browser-node-stub",
@@ -51,9 +49,7 @@ const browserNodeStub = {
 };
 
 async function listEntries(directory, keep) {
-  return (
-    await Array.fromAsync(glob("**/*", { cwd: directory, withFileTypes: true }))
-  )
+  return (await Array.fromAsync(glob("**/*", { cwd: directory, withFileTypes: true })))
     .filter((entry) => keep(entry))
     .map((entry) => relative(directory, join(entry.parentPath, entry.name)));
 }
@@ -94,12 +90,8 @@ async function writeBuild(staging) {
     }
   }
 
-  const expectedDirectories = new Set(
-    stagedFiles.flatMap((file) => ancestorDirectories(file)),
-  );
-  const staleDirectories = (
-    await listEntries(outputDir, (entry) => entry.isDirectory())
-  )
+  const expectedDirectories = new Set(stagedFiles.flatMap((file) => ancestorDirectories(file)));
+  const staleDirectories = (await listEntries(outputDir, (entry) => entry.isDirectory()))
     .filter((relativePath) => !expectedDirectories.has(relativePath))
     .sort((left, right) => right.length - left.length);
   for (const relativePath of staleDirectories) {
@@ -122,9 +114,7 @@ async function assertBuildOutput(directory) {
     isAbsolute(fromTemporaryRoot) ||
     !topLevelDirectory.startsWith("yt2anki-")
   ) {
-    throw new Error(
-      "--out-dir must be inside an OS temporary directory named yt2anki-*.",
-    );
+    throw new Error("--out-dir must be inside an OS temporary directory named yt2anki-*.");
   }
 
   // The yt2anki-* name is also used by disposable Anki bases and package
@@ -153,6 +143,8 @@ try {
   await build({
     absWorkingDir: root,
     bundle: true,
+    charset: "utf8",
+    chunkNames: "chunks/[name]-[hash]",
     entryPoints: {
       background: "src/background.ts",
       "popup/popup": "src/popup/popup.ts",
@@ -165,6 +157,7 @@ try {
     platform: "browser",
     plugins: [browserNodeStub],
     sourcemap: false,
+    splitting: true,
     target: browserTarget,
   });
 

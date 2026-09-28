@@ -32,14 +32,8 @@ test("a disposable build leaves stable dist untouched", async () => {
       { cwd: root, encoding: "utf8" },
     );
 
-    assert.equal(
-      result.status,
-      0,
-      `${result.stdout ?? ""}${result.stderr ?? ""}`,
-    );
-    const manifest = JSON.parse(
-      await readFile(join(outputDir, "manifest.json"), "utf8"),
-    );
+    assert.equal(result.status, 0, `${result.stdout ?? ""}${result.stderr ?? ""}`);
+    const manifest = JSON.parse(await readFile(join(outputDir, "manifest.json"), "utf8"));
     assert.equal(manifest.name, "yt2anki");
     const verification = spawnSync(
       process.execPath,
@@ -120,12 +114,44 @@ test("a disposable build refuses a directory it did not create", async () => {
 
     assert.notEqual(result.status, 0);
     assert.match(output(result), /must be empty or a previous build output/u);
-    assert.equal(
-      await readFile(collection, "utf8"),
-      "disposable Anki collection",
-    );
+    assert.equal(await readFile(collection, "utf8"), "disposable Anki collection");
   } finally {
     await rm(ankiBase, { force: true, recursive: true });
+  }
+});
+
+test("verification rejects missing, unused, or external shared modules", async () => {
+  const temporaryRoot = await mkdtemp(join(tmpdir(), "yt2anki-build-test-"));
+  const outputDir = join(temporaryRoot, "extension");
+  try {
+    assert.equal(runBuild(["--out-dir", outputDir]).status, 0);
+    const [chunk] = await Array.fromAsync(glob("chunks/*.js", { cwd: outputDir }));
+    assert.ok(chunk, "build must share modules between entry points");
+    const chunkPath = join(outputDir, chunk);
+    const original = await readFile(chunkPath);
+    await rm(chunkPath);
+    assert.notEqual(runVerify(["--dir", outputDir]).status, 0);
+    await writeFile(chunkPath, original);
+
+    await withEdit(
+      join(outputDir, "background.js"),
+      (text) => text.replace(/(\.\/chunks\/chunk-[A-Z0-9]{8})\.js/u, "$1"),
+      () => assert.notEqual(runVerify(["--dir", outputDir]).status, 0),
+    );
+
+    const unused = join(outputDir, "chunks", "chunk-AAAAAAAA.js");
+    await writeFile(unused, "export const unused = true;\n");
+    assert.notEqual(runVerify(["--dir", outputDir]).status, 0);
+    await rm(unused);
+
+    await withEdit(
+      chunkPath,
+      (text) => `import "https://example.com/external.js";\n${text}`,
+      () => assert.notEqual(runVerify(["--dir", outputDir]).status, 0),
+    );
+    assert.equal(runVerify(["--dir", outputDir]).status, 0);
+  } finally {
+    await rm(temporaryRoot, { force: true, recursive: true });
   }
 });
 
@@ -152,11 +178,7 @@ test("a disposable build refuses an unowned temporary root", async () => {
   try {
     const result = spawnSync(
       process.execPath,
-      [
-        join(root, "scripts", "build.mjs"),
-        "--out-dir",
-        join(temporaryRoot, "extension"),
-      ],
+      [join(root, "scripts", "build.mjs"), "--out-dir", join(temporaryRoot, "extension")],
       { cwd: root, encoding: "utf8" },
     );
 
@@ -218,16 +240,10 @@ test("ZIP packaging rejects unsafe output and unapproved build contents", async 
   const archive = join(temporaryRoot, "rejected.zip");
   try {
     assert.equal(runBuild(["--out-dir", source]).status, 0);
-    for (const target of [
-      join(source, "bad.zip"),
-      join(stableDist, "bad.zip"),
-    ]) {
+    for (const target of [join(source, "bad.zip"), join(stableDist, "bad.zip")]) {
       const result = runPackage(source, target);
       assert.notEqual(result.status, 0);
-      assert.match(
-        output(result),
-        /outside the build directory and stable dist/u,
-      );
+      assert.match(output(result), /outside the build directory and stable dist/u);
     }
     await withEdit(
       join(source, "manifest.json"),
@@ -263,10 +279,7 @@ test("ZIP packaging rejects junction paths into the build before creating direct
     ]) {
       const result = runPackage(directory, destination);
       assert.notEqual(result.status, 0);
-      assert.match(
-        output(result),
-        /outside the build directory and stable dist/u,
-      );
+      assert.match(output(result), /outside the build directory and stable dist/u);
     }
     assert.deepEqual(await snapshotDirectory(source), before);
     await assert.rejects(stat(join(source, "nested")), { code: "ENOENT" });
@@ -289,19 +302,17 @@ function runPackage(source, destination, timezone = "UTC") {
 }
 
 function runBuild(args) {
-  return spawnSync(
-    process.execPath,
-    [join(root, "scripts", "build.mjs"), ...args],
-    { cwd: root, encoding: "utf8" },
-  );
+  return spawnSync(process.execPath, [join(root, "scripts", "build.mjs"), ...args], {
+    cwd: root,
+    encoding: "utf8",
+  });
 }
 
 function runVerify(args) {
-  return spawnSync(
-    process.execPath,
-    [join(root, "scripts", "verify-build.mjs"), ...args],
-    { cwd: root, encoding: "utf8" },
-  );
+  return spawnSync(process.execPath, [join(root, "scripts", "verify-build.mjs"), ...args], {
+    cwd: root,
+    encoding: "utf8",
+  });
 }
 
 function output(result) {
@@ -319,9 +330,7 @@ async function withEdit(file, edit, check) {
 }
 
 async function snapshotDirectory(directory) {
-  const files = (
-    await Array.fromAsync(glob("**/*", { cwd: directory, withFileTypes: true }))
-  )
+  const files = (await Array.fromAsync(glob("**/*", { cwd: directory, withFileTypes: true })))
     .filter((entry) => entry.isFile())
     .map((entry) => join(entry.parentPath, entry.name))
     .sort();

@@ -61,16 +61,12 @@ export function createSegmentEditor({
   let activeIndex = 0;
   let disabled = false;
   let merging = false;
-  const pinyinSource = chineseSegmentField(
-    draft.targetTrack,
-    draft.translationTrack,
-  );
+  const pinyinSource = chineseSegmentField(draft.targetTrack, draft.translationTrack);
   // Gated on the track, not just on stored values: the Note Type follows the
   // track, so a Draft with no Pinyin source would otherwise show an editable
   // column whose contents the package silently drops.
   let pinyinVisible =
-    pinyinSource !== null &&
-    draft.segments.some((segment) => Boolean(segment.pinyin.trim()));
+    pinyinSource !== null && draft.segments.some((segment) => Boolean(segment.pinyin.trim()));
 
   list.addEventListener("click", (event) => {
     if (disabled || merging) return;
@@ -124,11 +120,7 @@ export function createSegmentEditor({
     mergeStatus.textContent = "Cards merged. Use Revert last merge to undo.";
   }
 
-  function replaceSegments(
-    index: number,
-    count: number,
-    segments: Segment[],
-  ): void {
+  function replaceSegments(index: number, count: number, segments: Segment[]): void {
     draft.segments.splice(index, count, ...segments);
     activeIndex = index;
     render();
@@ -307,15 +299,11 @@ export function createSegmentEditor({
     }
     const missingTarget = !hasTargetText(segment);
     row.classList.toggle("invalid", missingTarget);
-    const checkbox = row.querySelector<HTMLInputElement>(
-      'input[type="checkbox"]',
-    );
+    const checkbox = row.querySelector<HTMLInputElement>('input[type="checkbox"]');
     if (checkbox) {
       checkbox.checked = segment.selected;
     }
-    const target = row.querySelector<HTMLTextAreaElement>(
-      'textarea[data-field="target"]',
-    );
+    const target = row.querySelector<HTMLTextAreaElement>('textarea[data-field="target"]');
     target?.setAttribute("aria-invalid", missingTarget.toString());
   }
 
@@ -323,10 +311,8 @@ export function createSegmentEditor({
     const selectedCount = selectedSegments().length;
     const selectableCount = draft.segments.filter(hasTargetText).length;
     summary.textContent = `${selectedCount}/${draft.segments.length}`;
-    bulkSelection.checked =
-      selectableCount > 0 && selectedCount === selectableCount;
-    bulkSelection.indeterminate =
-      selectedCount > 0 && selectedCount < selectableCount;
+    bulkSelection.checked = selectableCount > 0 && selectedCount === selectableCount;
+    bulkSelection.indeterminate = selectedCount > 0 && selectedCount < selectableCount;
     bulkSelection.setAttribute(
       "aria-label",
       `Select all Segments, ${selectedCount} of ${draft.segments.length} selected`,
@@ -345,21 +331,15 @@ export function createSegmentEditor({
     generatePinyin.disabled = editingDisabled;
     pinyinStatus.hidden = pinyinSource === null;
     bulkSelection.disabled = editingDisabled;
-    for (const button of list.querySelectorAll<HTMLButtonElement>("button")) {
-      button.disabled = editingDisabled;
-    }
-    for (const checkbox of list.querySelectorAll<HTMLInputElement>(
-      'input[type="checkbox"]',
-    )) {
-      checkbox.disabled = editingDisabled;
-    }
-    for (const textarea of [
-      ...list.querySelectorAll<HTMLTextAreaElement>("textarea"),
+    for (const control of [
+      ...list.querySelectorAll<HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement>(
+        'button, input[type="checkbox"], textarea',
+      ),
       previewTarget,
       previewPinyin,
       previewTranslation,
     ]) {
-      textarea.disabled = editingDisabled;
+      control.disabled = editingDisabled;
     }
   }
 
@@ -417,10 +397,7 @@ function createRow(
   previewButton.className = "row-preview-button";
   previewButton.type = "button";
   previewButton.textContent = String(index + 1).padStart(3, "0");
-  previewButton.setAttribute(
-    "aria-label",
-    `Preview Segment ${index + 1}, ${formatRange(segment)}`,
-  );
+  previewButton.setAttribute("aria-label", `Preview Segment ${index + 1}, ${formatRange(segment)}`);
   number.append(previewButton);
 
   const time = document.createElement("td");
@@ -429,12 +406,7 @@ function createRow(
   range.textContent = formatRange(segment);
   time.append(range);
 
-  row.append(
-    selection,
-    number,
-    time,
-    fieldCell("target", segment.target, index, draft),
-  );
+  row.append(selection, number, time, fieldCell("target", segment.target, index, draft));
   if (pinyinVisible) {
     row.append(fieldCell("pinyin", segment.pinyin, index, draft));
   }
@@ -463,11 +435,7 @@ function createRow(
   return row;
 }
 
-function mergeControl(
-  className: string,
-  label: string,
-  icon: string,
-): HTMLButtonElement {
+function mergeControl(className: string, label: string, icon: string): HTMLButtonElement {
   const button = document.createElement("button");
   button.type = "button";
   button.className = className;
@@ -498,10 +466,7 @@ function fieldCell(
   input.spellcheck = false;
   input.value = value;
   input.required = field === "target";
-  input.setAttribute(
-    "aria-label",
-    `${fieldLabel(field, draft)} for Segment ${index + 1}`,
-  );
+  input.setAttribute("aria-label", `${fieldLabel(field, draft)} for Segment ${index + 1}`);
   cell.append(input);
   return cell;
 }
@@ -511,9 +476,7 @@ function fieldLabel(field: EditableField, draft: Draft): string {
     return "Pinyin";
   }
   return (
-    field === "target"
-      ? draft.targetTrack.name
-      : (draft.translationTrack?.name ?? "Track two")
+    field === "target" ? draft.targetTrack.name : (draft.translationTrack?.name ?? "Track two")
   ).replace(/\s*\([^()]+\)\s*$/u, "");
 }
 

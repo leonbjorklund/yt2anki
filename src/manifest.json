@@ -2,14 +2,9 @@
   "manifest_version": 3,
   "name": "yt2anki",
   "description": "Turn YouTube videos into Anki cards.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "minimum_chrome_version": "138",
-  "permissions": [
-    "activeTab",
-    "declarativeNetRequestWithHostAccess",
-    "scripting",
-    "storage"
-  ],
+  "permissions": ["activeTab", "declarativeNetRequestWithHostAccess", "scripting", "storage"],
   "optional_permissions": ["downloads", "downloads.open"],
   "host_permissions": [],
   "optional_host_permissions": ["https://www.youtube.com/*"],
@@ -21,10 +16,10 @@
     "default_popup": "popup/popup.html",
     "default_title": "yt2anki",
     "default_icon": {
-      "16": "icons/action-16.png",
+      "16": "icons/icon-16.png",
       "20": "icons/action-20.png",
       "24": "icons/action-24.png",
-      "32": "icons/action-32.png"
+      "32": "icons/icon-32.png"
     }
   },
   "icons": {

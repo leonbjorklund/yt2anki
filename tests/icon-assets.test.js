@@ -8,10 +8,8 @@ const root = resolve(import.meta.dirname, "..");
 const iconDirectory = join(root, "src", "icons");
 const brand = [250, 92, 115];
 const iconSpecs = new Map([
-  ["action-16.png", 16],
   ["action-20.png", 20],
   ["action-24.png", 24],
-  ["action-32.png", 32],
   ["icon-16.png", 16],
   ["icon-32.png", 32],
   ["icon-48.png", 48],
@@ -64,10 +62,10 @@ test("manifest and popup use the release icon set", async () => {
   const manifest = JSON.parse(manifestText);
 
   assert.deepEqual(manifest.action.default_icon, {
-    16: "icons/action-16.png",
+    16: "icons/icon-16.png",
     20: "icons/action-20.png",
     24: "icons/action-24.png",
-    32: "icons/action-32.png",
+    32: "icons/icon-32.png",
   });
   assert.deepEqual(manifest.icons, {
     16: "icons/icon-16.png",
@@ -77,10 +75,7 @@ test("manifest and popup use the release icon set", async () => {
   });
   assert.match(svg, /fill="#fa5c73"/u);
   assert.doesNotMatch(svg, /light-dark\(/u);
-  assert.match(
-    popup,
-    /<img src="\.\.\/icons\/yt2anki-logo\.svg" width="24" height="24" alt="">/u,
-  );
+  assert.match(popup, /<img src="\.\.\/icons\/yt2anki-logo\.svg" width="24" height="24" alt="">/u);
 });
 
 function decodeRgbaPng(buffer) {
@@ -125,22 +120,13 @@ function decodeRgbaPng(buffer) {
     for (let column = 0; column < stride; column += 1) {
       const raw = encoded[encodedOffset];
       encodedOffset += 1;
-      const left =
-        column >= bytesPerPixel
-          ? pixels[rowOffset + column - bytesPerPixel]
-          : 0;
+      const left = column >= bytesPerPixel ? pixels[rowOffset + column - bytesPerPixel] : 0;
       const above = row > 0 ? pixels[rowOffset + column - stride] : 0;
       const upperLeft =
         row > 0 && column >= bytesPerPixel
           ? pixels[rowOffset + column - stride - bytesPerPixel]
           : 0;
-      pixels[rowOffset + column] = applyPngFilter(
-        filter,
-        raw,
-        left,
-        above,
-        upperLeft,
-      );
+      pixels[rowOffset + column] = applyPngFilter(filter, raw, left, above, upperLeft);
     }
   }
   assert.equal(encodedOffset, encoded.length, "PNG scanline length");
