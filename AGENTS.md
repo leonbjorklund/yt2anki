@@ -1,6 +1,6 @@
 # Agent rules
 
-Read README.md and CONTEXT.md. Product changes require an approved design and implementation plan. Keep documentation minimal; state each rule once.
+Read README.md and GLOSSARY.md. Product changes require an approved design and implementation plan. Keep documentation minimal; state each rule once.
 
 ## Product contract
 
