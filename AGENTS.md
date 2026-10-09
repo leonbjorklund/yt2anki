@@ -4,7 +4,7 @@ Read README.md and GLOSSARY.md. Product changes require an approved design and i
 
 ## Product contract
 
-- One or two Standard Caption Tracks become editable Anki listening cards; video stays on YouTube.
+- One or two Standard Caption Tracks become editable Anki cards; video stays on YouTube.
 - Preserve exact timing and bilingual continuation rules. Drafts autosave with stale-write protection; regeneration replaces, export retains. Never persist capture credentials or signed URLs.
 - Preview starts without playback. Pinyin fills blank Simplified Chinese values. Export checks playback compatibility; failures preserve data.
 
@@ -26,8 +26,8 @@ Read README.md and GLOSSARY.md. Product changes require an approved design and i
 
 Only the exact message `run` triggers `pnpm test:manual -- --label "<current check>"`. Reuse its dedicated profile and Chrome's last-used selection; never force Default. If new or missing, run `pnpm test:manual:setup` once for the owner's permission step. No substitute launches or reloads.
 
-Preserve `.local/manual-chrome-profile`; never inspect, clean, copy, commit, or automate its stored data. Never test against the owner's normal Chrome profile or installed Anki collection. The command does not contact Anki; the owner removes leftover Video Decks. After launch, report only the popup heading and behavior to check.
+Preserve `.local/manual-chrome-profile`; never inspect, clean, copy, commit, or automate its stored data. Never test against the owner's normal Chrome profile or installed Anki collection. The command does not contact Anki; the owner removes leftover Video Decks. After launch, report only the `--label` text and behavior to check.
 
 ## Approvals
 
-Stable builds, visible window control, real Anki interaction, publication, commits, pushes, and releases each require approval. Before visible control, name the window and effect, then wait.
+Visible window control, real Anki interaction, publication, commits, pushes, and releases each require approval. Before visible control, name the window and effect, then wait.
