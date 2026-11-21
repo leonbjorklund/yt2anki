@@ -135,9 +135,11 @@ for (const theme of ["light", "dark"]) {
         "background-color",
         theme === "dark" ? "rgb(37, 42, 50)" : "rgb(238, 241, 245)",
       );
+      await expect(button).toHaveCSS("outline-style", "solid");
+      await expect(button).toHaveCSS("outline-width", "1px");
       await expect(button).toHaveCSS(
-        "outline",
-        `${theme === "dark" ? "rgb(69, 78, 89)" : "rgb(142, 147, 155)"} solid 1px`,
+        "outline-color",
+        theme === "dark" ? "rgb(69, 78, 89)" : "rgb(142, 147, 155)",
       );
       await expect(button).toHaveCSS(
         "color",
