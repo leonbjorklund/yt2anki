@@ -851,6 +851,16 @@ for (const granted of [true, false]) {
         [downloadId],
       );
       if (granted) {
+        // The first popup could not track this download, so Open in Anki
+        // reports it unfinished until Chrome marks it complete.
+        await expect
+          .poll(() =>
+            worker.evaluate(
+              async (id) => (await chrome.downloads.search({ id }))[0]?.state,
+              downloadId,
+            ),
+          )
+          .toBe("complete");
         await recovered.evaluate(`(() => {
           globalThis.__openedPackageIds = [];
           chrome.downloads.open = async (id) => { globalThis.__openedPackageIds.push(id); };
